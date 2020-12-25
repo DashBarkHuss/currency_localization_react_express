@@ -1,3 +1,7 @@
+# Currency Internationalization
+
+This is a sample project that shows how to set the currency for a user depending on their language preference in their browser `accept-language` header. Right now this project only shows how to detect and set the locale in the cookie. More to come.
+
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
 ## Proxy
@@ -6,8 +10,6 @@ I added a proxy to this create react app project. A proxy allows you to act as i
 
 1. Add `webpack.config.js`
 2. `"proxy": "http://localhost:4000"`
-
-## Backend
 
 ## `Accept-Header` Values explained
 
@@ -38,6 +40,8 @@ Lots of suggestions here:
 3. Edit this panel:
 
 <img src="imgs/chrome.png">
+
+Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
 ## Detecting the preferred locale from the header
 
@@ -113,6 +117,12 @@ JSON.parse(
 
 //> {locale: "en-CA", countryCode: "CA", languageCode: "en"}
 ```
+
+<hr>
+
+Notes for later:
+
+<hr>
 
 ## Country Data
 
