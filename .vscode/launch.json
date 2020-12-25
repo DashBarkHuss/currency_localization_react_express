@@ -20,5 +20,11 @@
       "console": "integratedTerminal",
       "program": "${workspaceFolder}/backend-express/server.js"
     }
+  ],
+  "compounds": [
+    {
+      "name": "Server/chrome debugger",
+      "configurations": ["backend-i18ncurrencies", "Launch Chrome against localhost"]
+    }
   ]
 }

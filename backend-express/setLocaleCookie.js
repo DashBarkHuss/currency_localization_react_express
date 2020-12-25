@@ -11,7 +11,7 @@ const getPreferredLocale = (acceptLanguageHeader) => {
     )
     .sort((a, b) => (a.q > b.q ? -1 : 1));
   return (
-    locales.find((el) => el.locale.match(/-[A-Z]{2}/g) && el.locale.match(/-[A-Z]{2}/g).locale) ||
+    locales.find((el) => el.locale.match(/-[A-Z]{2}/g) && el.locale.match(/-[A-Z]{2}/g)).locale ||
     locales[0].locale
   );
 };

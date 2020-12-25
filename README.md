@@ -1,6 +1,14 @@
 # Currency Internationalization
 
-This is a sample project that shows how to set the currency for a user depending on their language preference in their browser `accept-language` header. Right now this project only shows how to detect and set the locale in the cookie. More to come.
+This is a sample project that shows how to set the currency for a user depending on their language preference in their browser `accept-language` header.
+
+Right now this project:
+
+- shows how to detect and set the locale in the cookie.
+- Can (insecurely) login/logout aka create a user on the session.
+- More to come...
+
+<img src = "imgs/current.png" width = "250"/>
 
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
@@ -38,6 +46,25 @@ Lots of suggestions here:
 1. navigate to `chrome://settings/languages`.
 2. Book marked the page for easy return.
 3. Edit this panel:
+4.
+
+### How to Change Language Headers in your frontend code
+
+```javascript
+const headers = new Headers();
+headers.set('Accept-Language', 'fr-CA;q=1.0');
+fetch('/cookies', { credentials: 'same-origin', headers })
+  .then((r) => {
+    return r.text();
+  })
+  .then((text) => {
+    setDisplayText(text);
+    console.log(`proxy request: ${text}`);
+  })
+  .catch((err) => {
+    console.log(`proxy request: ${err}`);
+  });
+```
 
 <img src="imgs/chrome.png">
 
