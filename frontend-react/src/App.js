@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 function App() {
   const [localeCookie, setLocaleCookie] = useState('');
-  const [newLoginSession, setNewLoginSession] = useState(false);
   const [user, setUser] = useState(null);
 
   const fetchUser = () => {
@@ -17,12 +16,6 @@ function App() {
   };
 
   useEffect(fetchUser, []);
-  useEffect(() => {
-    if (newLoginSession) {
-      fetchUser();
-      setNewLoginSession(false);
-    }
-  }, [newLoginSession]);
 
   const sendRequest = () => {
     fetch('/cookies', { credentials: 'same-origin' })
@@ -47,12 +40,23 @@ function App() {
     })
       .then((res) => res.text())
       .then((text) => {
-        setNewLoginSession(true);
+        fetchUser();
         console.log('server response: ', text);
       })
       .catch((err) => {
         console.log(`couldn't login ${username}: ${err}`);
       });
+  };
+  const getShop = (shopID) => {
+    // fetch(`/shop/${shopID}`)
+    //   .then((res) => res.json())
+    //   .then((json) => {
+    //     setNewLoginSession(true);
+    //     console.log('server response: ', text);
+    //   })
+    //   .catch((err) => {
+    //     console.log(`couldn't login ${username}: ${err}`);
+    //   });
   };
   const logout = () => {
     fetch('/logout', {
@@ -60,19 +64,22 @@ function App() {
     })
       .then((res) => res.text())
       .then((text) => {
-        setNewLoginSession(true);
+        setUser(null);
         console.log('server response: ', text);
       })
       .catch((err) => {
         console.log(`couldn't logout: ${err}`);
       });
   };
+  const convertCurreny = (originalPrice, initiallyCurrency, finalCurrency) => {
+    //get conversion rates
+  };
   return (
     <div className="App">
       <div id="requestCookies">
         <button onClick={sendRequest}>Fetch '/cookies'</button>
         <p>
-          <span style={{ fontWeight: 'bold' }}>Locale Cookie based on browser preference:</span>
+          <b>Locale Cookie based on browser preference:</b>
           <span style={{ fontSize: '.6rem' }}>{localeCookie}</span>
         </p>
       </div>
@@ -87,11 +94,21 @@ function App() {
       </div>
       <div id="account">
         <p>
-          <span style={{ fontWeight: 'bold' }}>LoggedIn:</span> {user?.username}
+          <b>LoggedIn:</b> {user?.username}
         </p>
         <p>
-          {' '}
-          <span style={{ fontWeight: 'bold' }}>Currency:</span> {user?.currency}
+          <b>Currency:</b> {user?.currency}
+        </p>
+      </div>
+      <div id="shop">
+        <button>Drake's Shop</button>
+        <button>Miley's Shop</button>
+        <button>Elizabeth's Shop</button>
+        <hr></hr>
+        <h3>Flower Shop</h3>
+        <p>Hi {user?.username}! Thank for visiting the flower shop!</p>
+        <p>
+          <b>Roses:</b> $40
         </p>
       </div>
     </div>
