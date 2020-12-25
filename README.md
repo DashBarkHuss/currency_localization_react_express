@@ -1,3 +1,5 @@
+Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
+
 ## Proxy
 
 I added a proxy to this create react app project. A proxy allows you to act as if your frontend and backend servers are running on the same server. This allows you to bypass cors. This proxy only works for development. In production, you have to run your front and backend on the same server or set up cors.
@@ -22,8 +24,6 @@ The values following the language codes, like `;q=0.7`, go from 0 to 1. 1 means 
 If you want to test the backend server with different languages you can do this with postman. Go the `Headers` tab and add `accept-language` in the key field and some value.
 
 <img src = "imgs/postman.png">
-
-Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
 ### How to Change Language Headers in Your browser
 
