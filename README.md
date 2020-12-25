@@ -6,6 +6,7 @@ Right now this project:
 
 - shows how to detect and set the locale in the cookie.
 - Can (insecurely) login/logout aka create a user on the session.
+- Browse different users shops.
 - More to come...
 
 <img src = "imgs/current.png" width = "250"/>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 function App() {
   const [localeCookie, setLocaleCookie] = useState('');
   const [user, setUser] = useState(null);
+  const [shop, setShop] = useState(null);
 
   const fetchUser = () => {
     fetch('/users/current')
@@ -48,15 +49,14 @@ function App() {
       });
   };
   const getShop = (shopID) => {
-    // fetch(`/shop/${shopID}`)
-    //   .then((res) => res.json())
-    //   .then((json) => {
-    //     setNewLoginSession(true);
-    //     console.log('server response: ', text);
-    //   })
-    //   .catch((err) => {
-    //     console.log(`couldn't login ${username}: ${err}`);
-    //   });
+    fetch(`/shops/${shopID}`)
+      .then((res) => res.json())
+      .then((json) => {
+        setShop(json);
+      })
+      .catch((err) => {
+        console.log(`couldn't get shop: ${err}`);
+      });
   };
   const logout = () => {
     fetch('/logout', {
@@ -101,14 +101,14 @@ function App() {
         </p>
       </div>
       <div id="shop">
-        <button>Drake's Shop</button>
-        <button>Miley's Shop</button>
-        <button>Elizabeth's Shop</button>
+        <button onClick={() => getShop(1)}>Miley's Shop</button>
+        <button onClick={() => getShop(2)}>Drake's Shop</button>
+        <button onClick={() => getShop(3)}>Elizabeth's Shop</button>
         <hr></hr>
-        <h3>Flower Shop</h3>
-        <p>Hi {user?.username}! Thank for visiting the flower shop!</p>
+        <h3>{shop?.owner}'s Shop</h3>
+        <p>Hi {user?.username}! Thank for visiting the my shop!</p>
         <p>
-          <b>Roses:</b> $40
+          <b>Some item:</b> {shop?.price}
         </p>
       </div>
     </div>
