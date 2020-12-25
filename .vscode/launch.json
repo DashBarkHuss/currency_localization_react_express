@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/front"
+      "webRoot": "${workspaceFolder}/frontend-react"
     },
     {
       "type": "node",
@@ -18,7 +18,7 @@
       "name": "backend-i18ncurrencies",
       "skipFiles": ["<node_internals>/**"],
       "console": "integratedTerminal",
-      "program": "${workspaceFolder}/backend-i18ncurrencies/server.js"
+      "program": "${workspaceFolder}/backend-express/server.js"
     }
   ]
 }
