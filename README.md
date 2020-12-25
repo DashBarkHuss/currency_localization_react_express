@@ -9,7 +9,7 @@ I added a proxy to this create react app project. A proxy allows you to act as i
 
 ## `Accept-Header` Values explained
 
-**Exmaple Value:** `da,en-GB;q=0.8,en;q=0.7`
+**Example Value:** `da,en-GB;q=0.8,en;q=0.7`
 
 This value says the browser's preference is `da` which is the language code for Danish, but will accept British English, and then other types of English.
 
