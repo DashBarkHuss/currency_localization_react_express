@@ -7,6 +7,7 @@ Right now this project:
 - shows how to detect and set the locale in the cookie.
 - Can (insecurely) login/logout aka create a user on the session.
 - Browse different users shops.
+- Guess the currency based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
 - More to come...
 
 <img src = "imgs/current.png" width = "250"/>
@@ -145,6 +146,24 @@ JSON.parse(
 
 //> {locale: "en-CA", countryCode: "CA", languageCode: "en"}
 ```
+
+### Parsed Cookies function
+
+Returns an object with each cookie as key value pair.
+
+```javascript
+const parsedCookies = () => {
+  const str = decodeURIComponent(document.cookie).split('; ');
+  const result = {};
+  for (let i = 0; i < str.length; i++) {
+    const cur = str[i].split('=');
+    result[cur[0]] = cur[1];
+  }
+  return result;
+};
+```
+
+##
 
 <hr>
 

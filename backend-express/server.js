@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const setLocaleCookie = require('./setLocaleCookie');
+const setCurrencyCookie = require('./setCurrencyCookie');
 const bodyParser = require('body-parser');
 
 const session = require('express-session');
@@ -26,6 +27,9 @@ app.use((req, res, next) => {
 });
 app.get('/cookies', (req, res) => {
   res.send(req.cookies.locale);
+});
+app.get('/hint_currency', (req, res) => {
+  res.send(req.cookies.locale || req.locale);
 });
 app.get('/shops/:id', (req, res) => {
   const { id } = req.params;

@@ -1,4 +1,5 @@
 const getPreferredLocale = (acceptLanguageHeader) => {
+  if (!acceptLanguageHeader.length) return '';
   const locales = acceptLanguageHeader
     .split(/(\b, \b|\b,\b|\b;q=\b)/g)
     .filter((el) => el !== ',' && el !== ', ' && el !== ';q=')
@@ -10,17 +11,19 @@ const getPreferredLocale = (acceptLanguageHeader) => {
       []
     )
     .sort((a, b) => (a.q > b.q ? -1 : 1));
-  return (
-    locales.find((el) => el.locale.match(/-[A-Z]{2}/g) && el.locale.match(/-[A-Z]{2}/g)).locale ||
-    locales[0].locale
+  const prefLocaleWithCountry = locales.find(
+    (el) => el.locale.match(/-[A-Z]{2}/g) && el.locale.match(/-[A-Z]{2}/g)
   );
+  return prefLocaleWithCountry ? prefLocaleWithCountry.locale : locales[0].locale;
 };
 
-const makeLocaleObj = (locale) => ({
-  locale,
-  countryCode: locale.match(/(?<=\-)[A-Z]*/g)[0],
-  languageCode: locale.match(/[^-]*/)[0],
-});
+const makeLocaleObj = (locale) => {
+  let countryCode = locale.match(/(?<=-)[A-Z]*/g);
+  countryCode = countryCode ? countryCode[0] : null;
+  let languageCode = locale.match(/[^-]*/);
+  languageCode = languageCode ? languageCode[0] : null;
+  return { locale, countryCode, languageCode };
+};
 
 const setLocaleCookie = (req, res, next) => {
   const cookieLocale = req.cookies.locale;
@@ -28,6 +31,7 @@ const setLocaleCookie = (req, res, next) => {
     const locale = getPreferredLocale(req.headers['accept-language']);
     const localeObj = makeLocaleObj(locale);
     res.cookie('locale', JSON.stringify(localeObj), { maxAge: new Date() * 0.001 + 300 });
+    req.locale = JSON.stringify(localeObj); // set for currency middle ware
   }
   next();
 };
