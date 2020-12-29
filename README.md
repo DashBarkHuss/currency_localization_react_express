@@ -12,7 +12,7 @@ Right now this project:
 - shop displays correct currency
 - More to come...
 
-<img src = "imgs/current.png" width = "250"/>
+<img src = "imgs/current1.png" width = "250"/>
 
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
