@@ -28,19 +28,7 @@ function App() {
       );
     }
   };
-  const fetchCurrency = () => {
-    if (!user?.currency && !parsedCookies().currency) {
-      fetch('/hint_currency')
-        .then((res) => {
-          if (res.status === 204) return null;
-          return res.text();
-        })
-        .then((text) => {
-          const locale = JSON.parse(text);
-          chooseCurrency(locale);
-        });
-    }
-  };
+
   const fetchUser = () => {
     return fetch('/users/current')
       .then((res) => {
@@ -53,14 +41,16 @@ function App() {
       });
   };
 
+  const clientCurrency = () => {
+    const cookies = parsedCookies();
+    return user ? user?.currency : cookies.currency;
+  };
+
   useEffect(() => {
-    // fetchCurrency(); //you could use this request <---, or if you have a request sent on every page load like fetching for the current user, use the method below
     fetchUser().then((usr) => {
-      const cookies = parsedCookies();
-      if (!usr?.currency || !cookies.currency) chooseCurrency(JSON.parse(cookies.locale));
-      else if (usr?.currency) document.cookie.currency = usr.currency;
+      if (!clientCurrency()) chooseCurrency(JSON.parse(parsedCookies().locale));
     });
-  }, []);
+  }, [clientCurrency]);
 
   const sendRequest = () => {
     fetch('/cookies', { credentials: 'same-origin' })
@@ -137,6 +127,7 @@ function App() {
         <button onClick={logout}>Logout</button>
       </div>
       <div id="account">
+        <b>Client Currency:</b> {clientCurrency()}
         <p>
           <b>LoggedIn:</b> {user?.username}
         </p>

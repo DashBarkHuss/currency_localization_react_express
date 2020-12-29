@@ -8,6 +8,7 @@ Right now this project:
 - Can (insecurely) login/logout aka create a user on the session.
 - Browse different users shops.
 - Set the currency cookie based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
+- detects currency by user settings or by cookie
 - More to come...
 
 <img src = "imgs/current.png" width = "250"/>
@@ -176,3 +177,26 @@ Notes for later:
 `npm i country-data`
 
 [Country Data](https://www.npmjs.com/package/country-data)
+
+## Setting cookies across domains when in production
+
+[Creating a JavaScript cookie on a domain and reading it across sub domains](https://stackoverflow.com/questions/5671451/creating-a-javascript-cookie-on-a-domain-and-reading-it-across-sub-domains)
+
+> ```html
+> <script type="text/javascript">
+>   var cookieName = 'HelloWorld';
+>   var cookieValue = 'HelloWorld';
+>   var myDate = new Date();
+>   myDate.setMonth(myDate.getMonth() + 12);
+>   document.cookie =
+>     cookieName + '=' + cookieValue + ';expires=' + myDate + ';domain=.example.com;path=/';
+> </script>
+> ```
+
+People in the comments said this was difficult to do when texting on localhost:
+
+> Browsers treat localhost cookies a bit differently than other cookies. Or rather, they treat all cookies in a way that makes working with localhost difficult. For instance, see stackoverflow.com/questions/1134290/…. I suggest editing your hosts file and aliasing something like myserver.local to 127.0.0.1. Then you can use that to access your local server (and when setting cookies), and hopefully everything should work.
+
+Also:
+
+> I would suggest is using the global encodeURI() & decodeURI() methods for the cookie name & value to handle any conversion that would need to take place. i.e. document.cookie = encodeURI(cookieName) +"=" + encodeURI(cookieValue).
