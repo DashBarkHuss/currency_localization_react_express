@@ -19,7 +19,7 @@ This is now working but I need to refactor somethings.
 - Things are rendering too many times, why?
 - can clientCurrency be a variable and not a function?
 
-<img src = "imgs/current2.png" width = "250"/>
+<img src = "imgs/current3.png" width = "250"/>
 
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
