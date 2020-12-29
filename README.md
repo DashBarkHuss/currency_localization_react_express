@@ -7,7 +7,7 @@ Right now this project:
 - shows how to detect and set the locale in the cookie.
 - Can (insecurely) login/logout aka create a user on the session.
 - Browse different users shops.
-- Guess the currency based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
+- Set the currency cookie based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
 - More to come...
 
 <img src = "imgs/current.png" width = "250"/>
