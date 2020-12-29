@@ -9,6 +9,7 @@ Right now this project:
 - Browse different users shops.
 - Set the currency cookie based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
 - detects currency by user settings or by cookie
+- shop displays correct currency
 - More to come...
 
 <img src = "imgs/current.png" width = "250"/>

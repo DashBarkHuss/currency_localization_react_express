@@ -105,8 +105,11 @@ function App() {
         console.log(`couldn't logout: ${err}`);
       });
   };
-  const convertCurreny = (originalPrice, initiallyCurrency, finalCurrency) => {
+  const convertCurrency = (originalPrice, initiallyCurrency, finalCurrency) => {
     //get conversion rates
+  };
+  const displayCurrency = (price, currency) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
   };
   return (
     <div className="App">
@@ -141,9 +144,9 @@ function App() {
         <button onClick={() => getShop(3)}>Elizabeth's Shop</button>
         <hr></hr>
         <h3>{shop?.owner}'s Shop</h3>
-        <p>Hi {user?.username}! Thank for visiting the my shop!</p>
+        <p>Hi {user?.username}! Thanks for visiting the my shop!</p>
         <p>
-          <b>Some item:</b> {shop?.price}
+          <b>Some item:</b> {shop ? displayCurrency(shop?.price, shop?.currency) : null}
         </p>
       </div>
     </div>
