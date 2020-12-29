@@ -10,9 +10,16 @@ Right now this project:
 - Set the currency cookie based on `accept-language` header or ask the user their preference if not clear from `accept-language`.
 - detects currency by user settings or by cookie
 - shop displays correct currency
+- converts currencies
 - More to come...
 
-<img src = "imgs/current1.png" width = "250"/>
+This is now working but I need to refactor somethings.
+
+- I think the dependencies for use effect aren't right.
+- Things are rendering too many times, why?
+- can clientCurrency be a variable and not a function?
+
+<img src = "imgs/current2.png" width = "250"/>
 
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 

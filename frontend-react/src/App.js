@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import getCurrencies from './scripts/getCurrencies';
+import ExchangeRateApiInterface from './scripts/ExchangeRatesApiInterface';
 function App() {
   const [localeCookie, setLocaleCookie] = useState('');
   const [user, setUser] = useState(null);
+  const [rate, setRate] = useState(null);
   const [shop, setShop] = useState(null);
   const parsedCookies = () => {
     const str = decodeURIComponent(document.cookie).split('; ');
@@ -45,12 +47,27 @@ function App() {
     const cookies = parsedCookies();
     return user ? user?.currency : cookies.currency;
   };
+  const clientLocale = () => {
+    const cookies = parsedCookies();
+    return user ? user?.locale : cookies.locale.locale;
+  };
 
   useEffect(() => {
     fetchUser().then((usr) => {
       if (!clientCurrency()) chooseCurrency(JSON.parse(parsedCookies().locale));
     });
   }, [clientCurrency]);
+
+  // not sure what this is supposed to be in dependency
+  useEffect(async () => {
+    if (shop) {
+      const rt = await new ExchangeRateApiInterface().getExchangeRate(
+        shop.currency,
+        clientCurrency()
+      );
+      return setRate(rt);
+    }
+  }, [shop]);
 
   const sendRequest = () => {
     fetch('/cookies', { credentials: 'same-origin' })
@@ -105,11 +122,16 @@ function App() {
         console.log(`couldn't logout: ${err}`);
       });
   };
-  const convertCurrency = (originalPrice, initiallyCurrency, finalCurrency) => {
-    //get conversion rates
+  const convertCurrency = async (unconvertedPrice, initialCurrency, finalCurrency) => {
+    // get conversion rate for  initiallyCurrency, finalCurrency
+    const rate = await new ExchangeRateApiInterface().getExchangeRate(
+      initialCurrency,
+      finalCurrency
+    );
+    return rate * unconvertedPrice;
   };
   const displayCurrency = (price, currency) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
+    return new Intl.NumberFormat(clientLocale(), { style: 'currency', currency }).format(price);
   };
   return (
     <div className="App">
@@ -146,7 +168,22 @@ function App() {
         <h3>{shop?.owner}'s Shop</h3>
         <p>Hi {user?.username}! Thanks for visiting the my shop!</p>
         <p>
-          <b>Some item:</b> {shop ? displayCurrency(shop?.price, shop?.currency) : null}
+          {clientCurrency() && shop?.currency !== clientCurrency() ? (
+            <>
+              <b>Some item: </b>
+              {shop
+                ? `estimated price: ${displayCurrency(
+                    shop?.price * rate,
+                    clientCurrency()
+                  )} converted from ${displayCurrency(shop?.price, shop?.currency)}
+                    `
+                : null}
+            </>
+          ) : (
+            <>
+              <b>Some item:</b> {shop ? displayCurrency(shop?.price, shop?.currency) : null}
+            </>
+          )}
         </p>
       </div>
     </div>
