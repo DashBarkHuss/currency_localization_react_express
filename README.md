@@ -11,15 +11,8 @@ Right now this project:
 - detects currency by user settings or by cookie
 - shop displays correct currency
 - converts currencies
-- More to come...
 
-This is now working but I need to refactor somethings.
-
-- I think the dependencies for use effect aren't right.
-- Things are rendering too many times, why?
-- can clientCurrency be a variable and not a function?
-
-<img src = "imgs/current3.png" width = "250"/>
+<img src = "imgs/demo.gif" width = "250"/>
 
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
@@ -52,12 +45,13 @@ Lots of suggestions here:
 
 - [How to change the locale in chrome browser](https://stackoverflow.com/questions/37221494/how-to-change-the-locale-in-chrome-browser)
 
-### What I did
+#### What I did
 
 1. navigate to `chrome://settings/languages`.
 2. Book marked the page for easy return.
 3. Edit this panel:
-4.
+
+<img src="imgs/chrome.png">
 
 ### How to Change Language Headers in your frontend code
 
@@ -77,13 +71,11 @@ fetch('/cookies', { credentials: 'same-origin', headers })
   });
 ```
 
-<img src="imgs/chrome.png">
-
 Resources: [React Internationalization – How To](https://www.smashingmagazine.com/2017/01/internationalizing-react-apps/)
 
 ## Detecting the preferred locale from the header
 
-This function extracts the preferred local from `req.headers['accept-language']`. It picks the highest weighted locale that has a country code, unless the there is a higher locale that doesn't have a country code. If none have a country code, it first the highest weighted locale.
+This function extracts the preferred local from `req.headers['accept-language']`. It picks the highest weighted locale that has a country code, unless the there is a higher locale that doesn't have a country code. If none have a country code, it picks highest weighted locale.
 
 If we have `en,en-CA;q=0.8` it would result in `en-CA` as the preference.
 
@@ -105,13 +97,12 @@ const getPreferredLocale = (acceptLanguageHeader) => {
 };
 ```
 
-### No Country Code in Header?
+### What if there's no country code in the header?
 
-Country code is important for currency. So what if the preferred locale is a language code without a country? Then we can either:
+Country code is important for currency. So what if the preferred locale is a language code without a country(ex: `en` instead of `en-Us`)? Then we can either:
 
-1. Guess the country
-2. Ask the user their preferred currency
-3. Ping this api from the client to get the country code:
+1. Ask the user their preferred currency with options base on the language code
+2. Ping an ip lookup api from the client to get the country code:
 
 ```javascript
 const countryCode = await fetch('https://extreme-ip-lookup.com/json/')
@@ -124,18 +115,18 @@ const countryCode = await fetch('https://extreme-ip-lookup.com/json/')
   });
 ```
 
-Give the user an option to change their locale or currency as well.
+**Important:** Always give every user an option to change their currency as well in the menu bar if you assumed their currency (not included in this project)
 
 ## Read Cookies on frontend
 
-If we want to access the cookies on the front end, we can now do so.
+If we want to access the cookies on the front end, we can do so.
 
 ### Not readable
 
 ```javascript
 document.cookie;
 
-//> "locale=%7B%22locale%22%3A%22en-CA%22%2C%22countryCode%22%3A%22CA%22%2C%22languageCode%22%3A%22en%22%7D othercookie=somevalue"
+//> "locale=%7B%22locale%22%3A%22en-CA%22%2C%22countryCode%22%3A%22CA%22%2C%22languageCode%22%3A%22en%22%7D; othercookie=somevalue"
 ```
 
 ### All cookies in a readable format
@@ -170,23 +161,28 @@ const parsedCookies = () => {
   }
   return result;
 };
+
+//{locale: "{"locale":"en-CA","countryCode":"CA","languageCode":"en"}", othercookie: "somevalue"}
 ```
-
-##
-
-<hr>
-
-Notes for later:
-
-<hr>
 
 ## Country Data
 
-`npm i country-data`
-
+I used this library for checking to see what currencies are available for each country:
 [Country Data](https://www.npmjs.com/package/country-data)
 
-## Setting cookies across domains when in production
+`npm i country-data`
+
+<hr>
+
+## Notes for improvement:
+
+- You may want to set an expiration date for your cookies
+
+- You should include a way for a user to manually change their currency. In this code, we assume the currency for people who have country codes in their `accept-language` headers. But if it's incorrect it should be easy to change it.
+
+### Setting cookies across domains when in production
+
+You might need to set the cookie more specifically in production because you want it to work across subdomains:
 
 [Creating a JavaScript cookie on a domain and reading it across sub domains](https://stackoverflow.com/questions/5671451/creating-a-javascript-cookie-on-a-domain-and-reading-it-across-sub-domains)
 

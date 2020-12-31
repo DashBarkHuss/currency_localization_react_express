@@ -1,158 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import getCurrencies from './scripts/getCurrencies';
+
+import {
+  clientLocale,
+  clientCurrency,
+  logout,
+  getShop,
+  login,
+  fetchUser,
+  chooseCurrency,
+  cookieRequest,
+  parsedCookies,
+  displayCurrency,
+} from './scripts/helpers';
+
 import ExchangeRateApiInterface from './scripts/ExchangeRatesApiInterface';
 function App() {
   const [localeCookie, setLocaleCookie] = useState('');
   const [user, setUser] = useState(null);
   const [rate, setRate] = useState(null);
   const [shop, setShop] = useState(null);
-  const parsedCookies = () => {
-    const str = decodeURIComponent(document.cookie).split('; ');
-    const result = {};
-    for (let i = 0; i < str.length; i++) {
-      const cur = str[i].split('=');
-      result[cur[0]] = cur[1];
-    }
-    return result;
-  };
-  const chooseCurrency = (locale) => {
-    if (locale.countryCode) {
-      const currencies = getCurrencies(locale.countryCode);
-      //replace with form to select currency and set document.cookie
-      if (currencies.length > 1)
-        return alert('Here we would ask the user to pick currency: ' + currencies.join(', '));
-
-      document.cookie = `currency= ${currencies[0]}`; // we need to give the user a way to change the currency later
-    } else {
-      //replace with form to select currency based on language and set document.cookie
-      alert(
-        `Here the user would pick currency from list of currencies. Currencies used in countries where people speak languageCode: "${locale.languageCode}" could be at top of list`
-      );
-    }
-  };
-
-  const fetchUser = () => {
-    return fetch('/users/current')
-      .then((res) => {
-        if (res.status === 204) return null;
-        return res.json();
-      })
-      .then((user) => {
-        setUser(user);
-        return user;
-      });
-  };
-
-  const clientCurrency = () => {
-    const cookies = parsedCookies();
-    return user ? user?.currency : cookies.currency;
-  };
-  const clientLocale = () => {
-    const cookies = parsedCookies();
-    return user ? user?.locale : cookies.locale.locale;
-  };
 
   useEffect(() => {
-    fetchUser().then((usr) => {
-      if (!clientCurrency()) chooseCurrency(JSON.parse(parsedCookies().locale));
+    fetchUser(setUser).then((usr) => {
+      if (!clientCurrency(usr)) {
+        chooseCurrency(JSON.parse(parsedCookies().locale));
+      }
     });
-  }, [clientCurrency]);
+  }, []);
 
-  // not sure what this is supposed to be in dependency
-  useEffect(async () => {
-    if (shop) {
-      const rt = await new ExchangeRateApiInterface().getExchangeRate(
-        shop.currency,
-        clientCurrency()
-      );
-      return setRate(rt);
-    }
-  }, [shop]);
+  useEffect(() => {
+    (async () => {
+      if (shop) {
+        if (shop) {
+          const rt = await new ExchangeRateApiInterface().getExchangeRate(
+            shop.currency,
+            clientCurrency(user)
+          );
+          return setRate(rt);
+        }
+      }
+    })();
+  }, [shop, user]);
 
-  const sendRequest = () => {
-    fetch('/cookies', { credentials: 'same-origin' })
-      .then((r) => {
-        return r.text();
-      })
-      .then((text) => {
-        setLocaleCookie(text);
-        console.log(`proxy request: ${text}`);
-      })
-      .catch((err) => {
-        console.log(`proxy request: ${err}`);
-      });
-  };
-  const login = (username) => {
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    fetch('/login', {
-      method: 'POST',
-      body: JSON.stringify({ username }),
-      headers,
-    })
-      .then((res) => res.text())
-      .then((text) => {
-        fetchUser();
-        console.log('server response: ', text);
-      })
-      .catch((err) => {
-        console.log(`couldn't login ${username}: ${err}`);
-      });
-  };
-  const getShop = (shopID) => {
-    fetch(`/shops/${shopID}`)
-      .then((res) => res.json())
-      .then((json) => {
-        setShop(json);
-      })
-      .catch((err) => {
-        console.log(`couldn't get shop: ${err}`);
-      });
-  };
-  const logout = () => {
-    fetch('/logout', {
-      method: 'DELETE',
-    })
-      .then((res) => res.text())
-      .then((text) => {
-        setUser(null);
-        console.log('server response: ', text);
-      })
-      .catch((err) => {
-        console.log(`couldn't logout: ${err}`);
-      });
-  };
-  const convertCurrency = async (unconvertedPrice, initialCurrency, finalCurrency) => {
-    // get conversion rate for  initiallyCurrency, finalCurrency
-    const rate = await new ExchangeRateApiInterface().getExchangeRate(
-      initialCurrency,
-      finalCurrency
-    );
-    return rate * unconvertedPrice;
-  };
-  const displayCurrency = (price, currency) => {
-    return new Intl.NumberFormat(clientLocale(), { style: 'currency', currency }).format(price);
-  };
   return (
-    <div className="App">
+    <div className="App" style={{ margin: '10px' }}>
       <div id="requestCookies">
-        <button onClick={sendRequest}>Fetch '/cookies'</button>
+        <button onClick={() => cookieRequest(setLocaleCookie)}>Fetch '/cookies'</button>
         <p>
           <b>Locale Cookie based on browser preference:</b>
           <span style={{ fontSize: '.6rem' }}>{localeCookie}</span>
         </p>
       </div>
       <div id="login-logout">
-        <button onClick={() => login('Miley')}>Login Miley (USD account)</button>
+        <button onClick={() => login('Miley', () => fetchUser(setUser))}>
+          Login Miley (USD account)
+        </button>
         <br />
-        <button onClick={() => login('Drake')}>Login Drake (CAD account)</button>
+        <button onClick={() => login('Drake', () => fetchUser(setUser))}>
+          Login Drake (CAD account)
+        </button>
         <br />
-        <button onClick={() => login('Elizabeth')}>Login Elizabeth (GBP account)</button>
+        <button onClick={() => login('Elizabeth', () => fetchUser(setUser))}>
+          Login Elizabeth (GBP account)
+        </button>
         <br />
-        <button onClick={logout}>Logout</button>
+        <button onClick={() => logout(() => setUser(null))}>Logout</button>
       </div>
       <div id="account">
-        <b>Client Currency:</b> {clientCurrency()}
+        <b>Client Currency:</b> {clientCurrency(user)}
         <p>
           <b>LoggedIn:</b> {user?.username}
         </p>
@@ -161,27 +76,33 @@ function App() {
         </p>
       </div>
       <div id="shop">
-        <button onClick={() => getShop(1)}>Miley's Shop</button>
-        <button onClick={() => getShop(2)}>Drake's Shop</button>
-        <button onClick={() => getShop(3)}>Elizabeth's Shop</button>
+        <button onClick={() => getShop(1, setShop)}>Miley's Shop</button>
+        <button onClick={() => getShop(2, setShop)}>Drake's Shop</button>
+        <button onClick={() => getShop(3, setShop)}>Elizabeth's Shop</button>
         <hr></hr>
         <h3>{shop?.owner}'s Shop</h3>
         <p>Hi {user?.username}! Thanks for visiting the my shop!</p>
         <p>
-          {clientCurrency() && shop?.currency !== clientCurrency() ? (
+          {clientCurrency(user) && shop?.currency !== clientCurrency(user) ? (
             <>
               <b>Some item: </b>
               {shop
                 ? `estimated price: ${displayCurrency(
                     shop?.price * rate,
-                    clientCurrency()
-                  )} converted from ${displayCurrency(shop?.price, shop?.currency)}
+                    clientCurrency(user),
+                    clientLocale(user)
+                  )} converted from ${displayCurrency(
+                    shop?.price,
+                    shop?.currency,
+                    clientLocale(user)
+                  )}
                     `
                 : null}
             </>
           ) : (
             <>
-              <b>Some item:</b> {shop ? displayCurrency(shop?.price, shop?.currency) : null}
+              <b>Some item:</b>{' '}
+              {shop ? displayCurrency(shop?.price, shop?.currency, clientLocale(user)) : null}
             </>
           )}
         </p>

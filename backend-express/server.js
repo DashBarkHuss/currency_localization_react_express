@@ -45,7 +45,7 @@ app.get('/shops/:id', (req, res) => {
 });
 app.get('/users/current', (req, res) => {
   if (req.session.user) return res.send(req.session.user);
-  else return res.sendStatus(204);
+  res.sendStatus(204);
 });
 
 app.post('/login', (req, res, next) => {
