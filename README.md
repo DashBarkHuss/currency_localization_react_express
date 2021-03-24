@@ -75,7 +75,9 @@ Resources: [React Internationalization – How To](https://www.smashingmagazine.
 
 ## Detecting the preferred locale from the header
 
-This function extracts the preferred local from `req.headers['accept-language']`. It picks the highest weighted locale that has a country code, unless the there is a higher locale that doesn't have a country code. If none have a country code, it picks highest weighted locale.
+This function extracts the preferred local from `req.headers['accept-language']`. It picks the highest weighted locale that has a country code, \*unless the there is a higher locale that doesn't have a country code\*\*(not true?). If none have a country code, it picks highest weighted locale.
+
+- Update months later- I don't know why I wrote this italicized part. It doesn't seem to be true. For example, input `"da;q=1,en-GB;q=0.8,en;q=0.7"` outputs `"en-GB"` and not `"da"`.
 
 If we have `en,en-CA;q=0.8` it would result in `en-CA` as the preference.
 
