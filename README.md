@@ -199,7 +199,7 @@ You might need to set the cookie more specifically in production because you wan
 > </script>
 > ```
 
-People in the comments said this was difficult to do when texting on localhost:
+People in the comments said this was difficult to do when on localhost:
 
 > Browsers treat localhost cookies a bit differently than other cookies. Or rather, they treat all cookies in a way that makes working with localhost difficult. For instance, see stackoverflow.com/questions/1134290/…. I suggest editing your hosts file and aliasing something like myserver.local to 127.0.0.1. Then you can use that to access your local server (and when setting cookies), and hopefully everything should work.
 
